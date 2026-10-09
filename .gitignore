@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# Datasets and Audio Files
+data/audio/
+*.wav
+*.mp3
+*.flac
+
+# Checkpoints and Trained Models
+checkpoints/
+models/
+runs/
+.wandb/
+
+# Output Reports & Logs
+reports/*.csv
+!reports/.gitkeep
+*.log
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+/data

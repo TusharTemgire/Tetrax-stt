@@ -1,0 +1,16 @@
+languages:
+  hi_in:
+    code: "hi"
+    whisper_language: "hindi"
+    name: "Hindi"
+    fleurs_config: "hi_in"
+  mr_in:
+    code: "mr"
+    whisper_language: "marathi"
+    name: "Marathi"
+    fleurs_config: "mr_in"
+  en_us:
+    code: "en"
+    whisper_language: "english"
+    name: "English (US)"
+    fleurs_config: "en_us"
