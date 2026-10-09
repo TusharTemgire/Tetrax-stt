@@ -1,10 +1,35 @@
 import csv
 import argparse
+import sys
 from collections import defaultdict
 from pathlib import Path
-import evaluate
 import soundfile as sf
 import torch
+
+# Prevent script name (evaluate.py) from shadowing third-party 'evaluate' package in sys.path
+script_dir = str(Path(__file__).resolve().parent)
+sys_path_removed = False
+if sys.path and Path(sys.path[0]).resolve() == Path(script_dir).resolve():
+    sys.path.pop(0)
+    sys_path_removed = True
+
+# Load WER metric calculation function (HF evaluate package with fallback to jiwer)
+compute_wer_fn = None
+try:
+    import evaluate
+    if hasattr(evaluate, "load"):
+        wer_metric = evaluate.load("wer")
+        compute_wer_fn = lambda preds, refs: float(wer_metric.compute(predictions=preds, references=refs))
+except Exception:
+    pass
+
+if compute_wer_fn is None:
+    import jiwer
+    compute_wer_fn = lambda preds, refs: float(jiwer.wer(refs, preds))
+
+if sys_path_removed:
+    sys.path.insert(0, script_dir)
+
 from transformers import pipeline
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,7 +63,6 @@ def main():
         chunk_length_s=30,
     )
 
-    wer_metric = evaluate.load("wer")
     records = defaultdict(lambda: {"refs": [], "preds": []})
 
     if not TEST_CSV.exists():
@@ -86,9 +110,9 @@ def main():
         for lang, values in sorted(records.items()):
             if not values["refs"]:
                 continue
-            score = wer_metric.compute(
-                predictions=values["preds"],
-                references=values["refs"],
+            score = compute_wer_fn(
+                preds=values["preds"],
+                refs=values["refs"],
             )
 
             writer.writerow({
@@ -104,3 +128,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
