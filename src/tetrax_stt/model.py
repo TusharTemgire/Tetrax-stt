@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
-import numpy as np
 import torch
 from transformers import pipeline
 
@@ -73,15 +72,8 @@ class TetraxSTTModel:
             "task": "transcribe"
         }
 
-        if isinstance(audio_input, (str, Path, bytes)):
-            from tetrax_stt.audio import load_and_preprocess_audio
-            audio_array, sr = load_and_preprocess_audio(audio_input)
-            inputs = {"raw": audio_array, "sampling_rate": sr}
-        else:
-            inputs = audio_input
-
         result = self.asr_pipeline(
-            inputs,
+            audio_input,
             generate_kwargs=generate_kwargs,
             return_timestamps=return_timestamps,
         )
@@ -91,29 +83,3 @@ class TetraxSTTModel:
             "language": lang_code,
             "chunks": result.get("chunks", None)
         }
-
-    def transcribe_stream_buffer(
-        self,
-        audio_array: np.ndarray,
-        sample_rate: int = 16000,
-        language: str = "hi",
-    ) -> str:
-        """
-        Transcribes an in-memory 16kHz float32 audio array chunk for real-time streaming.
-        """
-        if len(audio_array) == 0:
-            return ""
-
-        lang_code = language.strip().lower()
-        whisper_lang = LANGUAGE_MAP.get(lang_code, "hindi")
-
-        generate_kwargs = {
-            "language": whisper_lang,
-            "task": "transcribe"
-        }
-
-        # Format input dict for HuggingFace ASR pipeline raw array
-        inputs = {"raw": audio_array, "sampling_rate": sample_rate}
-        result = self.asr_pipeline(inputs, generate_kwargs=generate_kwargs)
-        return result.get("text", "").strip()
-
