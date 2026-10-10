@@ -37,7 +37,7 @@ class TetraxSTTModel:
     """
     Inference wrapper for Tetrax Fine-Tuned Whisper STT model.
     """
-    def __init__(self, model_path_or_name: Optional[Union[str, Path]] = None, device: Optional[str] = None):
+    def __init__(self, model_path_or_name: Optional[Union[str, Path]] = None, device: Optional[Union[str, int, torch.device]] = None):
         if model_path_or_name is None:
             self.model_path = resolve_default_model()
         else:
@@ -45,8 +45,12 @@ class TetraxSTTModel:
 
         if device is None:
             self.device_id = 0 if torch.cuda.is_available() else -1
+        elif isinstance(device, str):
+            self.device_id = 0 if ("cuda" in device and torch.cuda.is_available()) else -1
+        elif isinstance(device, torch.device):
+            self.device_id = 0 if (device.type == "cuda" and torch.cuda.is_available()) else -1
         else:
-            self.device_id = 0 if device == "cuda" else -1
+            self.device_id = device
 
         self.asr_pipeline = pipeline(
             "automatic-speech-recognition",

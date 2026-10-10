@@ -93,6 +93,10 @@ def main():
 
             audio, sample_rate = sf.read(str(audio_path), dtype="float32")
 
+            if audio.size == 0:
+                print(f"Warning: empty audio file at {audio_path}, skipping...")
+                continue
+
             if audio.ndim == 2:
                 audio = audio.mean(axis=1)
 

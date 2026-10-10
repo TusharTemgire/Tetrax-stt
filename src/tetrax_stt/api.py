@@ -82,7 +82,7 @@ ALLOWED_SUFFIXES = {".wav", ".mp3", ".flac", ".ogg", ".m4a", ".webm"}
 
 @app.get("/health")
 def health():
-    current_model = MODEL_DIR if Path(MODEL_DIR).exists() else FALLBACK_MODEL
+    current_model = resolve_model_path()
     logger.info(f"Health check invoked. Active model: {current_model}")
     return {
         "status": "ok",
@@ -140,7 +140,7 @@ async def transcribe(
         )
 
         elapsed = round(time.time() - start_time, 3)
-        current_model = MODEL_DIR if Path(MODEL_DIR).exists() else FALLBACK_MODEL
+        current_model = resolve_model_path()
         logger.info(f"Transcription successful in {elapsed}s using model '{current_model}'. Result length: {len(result['text'])} chars")
 
         return {
