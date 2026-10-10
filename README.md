@@ -10,8 +10,9 @@ Using the **Google FLEURS** dataset (`google/fleurs`).
 ---
 
 ## 📘 Quick Guides
-- ⚡ **Google Colab Training Guide**: [`COLAB_GUIDE.md`](file:///d:/Tushar_repos/Tetrax-CPaaS/tetrax-stt/COLAB_GUIDE.md) | Notebook: [`tetrax_stt_colab_training.ipynb`](file:///d:/Tushar_repos/Tetrax-CPaaS/tetrax-stt/tetrax_stt_colab_training.ipynb)
-- ☁️ **RunPod GPU Server Guide**: [`RUNPOD_GUIDE.md`](file:///d:/Tushar_repos/Tetrax-CPaaS/tetrax-stt/RUNPOD_GUIDE.md)
+- 🚀 **Model Usage Guide**: [`MODEL_USAGE.md`](file:///d:/Tushar_repos/Tetrax-stt/MODEL_USAGE.md)
+- ⚡ **Google Colab Training Guide**: [`COLAB_GUIDE.md`](file:///d:/Tushar_repos/Tetrax-stt/COLAB_GUIDE.md) | Notebook: [`tetrax_stt_colab_training.ipynb`](file:///d:/Tushar_repos/Tetrax-stt/tetrax_stt_colab_training.ipynb)
+- ☁️ **RunPod GPU Server Guide**: [`RUNPOD_GUIDE.md`](file:///d:/Tushar_repos/Tetrax-stt/RUNPOD_GUIDE.md)
 
 ---
 
@@ -147,7 +148,7 @@ Starting fine-tuning process...
 {'loss': 0.2910, 'learning_rate': 9.8000e-06, 'epoch': 1.00}
 {'eval_loss': 0.2140, 'epoch': 1.00}
 
-Saving final model to: D:\Tushar_repos\Tetrax-CPaaS\tetrax-stt\models\tetrax-stt-v1
+Saving final model to: D:\Tushar_repos\Tetrax-stt\models\tetrax-stt-v1
 Fine-tuning completed successfully!
 ```
 

@@ -29,7 +29,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL_DIR = os.getenv("TETRAX_STT_MODEL", "models/tetrax-stt-v1")
 FALLBACK_MODEL = "openai/whisper-small"
 
 LANGUAGE_MAP = {
@@ -44,10 +43,30 @@ LANGUAGE_MAP = {
 device = 0 if torch.cuda.is_available() else -1
 asr_pipeline = None
 
+ROOT = Path(__file__).resolve().parents[2]
+
+def resolve_model_path():
+    env_model = os.getenv("TETRAX_STT_MODEL")
+    candidates = []
+    if env_model:
+        candidates.append(Path(env_model))
+    candidates.extend([
+        ROOT / "models" / "tetrax-stt-v1",
+        ROOT / "tetrax-stt-v1",
+        Path("models/tetrax-stt-v1"),
+        Path("tetrax-stt-v1"),
+    ])
+    for p in candidates:
+        if p.exists() and (p / "config.json").exists():
+            return str(p)
+    return FALLBACK_MODEL
+
+MODEL_DIR = resolve_model_path()
+
 def get_pipeline():
     global asr_pipeline
     if asr_pipeline is None:
-        target_model = MODEL_DIR if Path(MODEL_DIR).exists() else FALLBACK_MODEL
+        target_model = resolve_model_path()
         logger.info(f"Initializing STT ASR pipeline using model: '{target_model}' (Device CUDA: {torch.cuda.is_available()})")
         asr_pipeline = pipeline(
             "automatic-speech-recognition",

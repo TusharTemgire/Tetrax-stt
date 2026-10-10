@@ -44,14 +44,24 @@ LANGUAGES = {
     "mr": "marathi",
 }
 
+def get_model_path(custom_path=None):
+    if custom_path:
+        return custom_path
+    candidates = [
+        ROOT / "models" / "tetrax-stt-v1",
+        ROOT / "tetrax-stt-v1",
+    ]
+    for p in candidates:
+        if p.exists() and (p / "config.json").exists():
+            return str(p)
+    return FALLBACK_MODEL
+
 def main():
     parser = argparse.ArgumentParser(description="Evaluate fine-tuned Whisper STT model per language.")
     parser.add_argument("--model", type=str, default=None, help="Path to model directory or HuggingFace ID.")
     args = parser.parse_args()
 
-    model_path = args.model
-    if model_path is None:
-        model_path = str(DEFAULT_MODEL_DIR) if DEFAULT_MODEL_DIR.exists() else FALLBACK_MODEL
+    model_path = get_model_path(args.model)
 
     print(f"Loading model for evaluation: {model_path}")
     device_id = 0 if torch.cuda.is_available() else -1

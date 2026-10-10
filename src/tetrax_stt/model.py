@@ -15,12 +15,34 @@ LANGUAGE_MAP = {
     "en_us": "english",
 }
 
+ROOT = Path(__file__).resolve().parents[2]
+
+def resolve_default_model() -> str:
+    env_model = os.getenv("TETRAX_STT_MODEL")
+    candidates = []
+    if env_model:
+        candidates.append(Path(env_model))
+    candidates.extend([
+        ROOT / "models" / "tetrax-stt-v1",
+        ROOT / "tetrax-stt-v1",
+        Path("models/tetrax-stt-v1"),
+        Path("tetrax-stt-v1"),
+    ])
+    for p in candidates:
+        if p.exists() and (p / "config.json").exists():
+            return str(p)
+    return DEFAULT_MODEL_NAME
+
 class TetraxSTTModel:
     """
     Inference wrapper for Tetrax Fine-Tuned Whisper STT model.
     """
-    def __init__(self, model_path_or_name: Union[str, Path] = DEFAULT_MODEL_NAME, device: Optional[str] = None):
-        self.model_path = str(model_path_or_name)
+    def __init__(self, model_path_or_name: Optional[Union[str, Path]] = None, device: Optional[str] = None):
+        if model_path_or_name is None:
+            self.model_path = resolve_default_model()
+        else:
+            self.model_path = str(model_path_or_name)
+
         if device is None:
             self.device_id = 0 if torch.cuda.is_available() else -1
         else:
