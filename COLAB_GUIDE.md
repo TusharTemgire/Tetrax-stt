@@ -33,8 +33,20 @@ drive.mount('/content/drive')
 ```
 
 ### 4. Prepare Dataset
+
+#### Option A: Download Google FLEURS (`hi_in`, `mr_in`, `en_us`)
 ```bash
 !python scripts/download_fleurs_data.py
+!python scripts/prepare_dataset.py
+```
+
+#### Option B: Download AI4Bharat IndicVoices (Marathi)
+```bash
+# Log in to Hugging Face (ai4bharat/IndicVoices is a gated dataset)
+!huggingface-cli login --token YOUR_HF_TOKEN
+
+# Download Marathi dataset from IndicVoices
+!python scripts/download_indicvoices_data.py --languages marathi
 !python scripts/prepare_dataset.py
 ```
 

@@ -31,7 +31,8 @@ tetrax-stt/
 │   └── manifests/                 # CSV manifests (train.csv, validation.csv, test.csv)
 ├── scripts/
 │   ├── check_environment.py       # GPU & dependencies diagnostic
-│   ├── download_fleurs_data.py    # Automatic dataset downloader via HuggingFace
+│   ├── download_fleurs_data.py    # Automatic FLEURS downloader via HuggingFace
+│   ├── download_indicvoices_data.py # Automatic AI4Bharat IndicVoices dataset downloader
 │   ├── prepare_local_fleurs.py    # Local tar.gz & tsv dataset extractor
 │   ├── prepare_dataset.py         # Manifest validation script
 │   ├── train.py                   # Whisper Small fine-tuning script
@@ -84,15 +85,26 @@ tetrax-stt/
 
 ### Step 2: Prepare Dataset
 
-- **Automatic Download via HuggingFace:**
+- **Option A: Automatic Download from Google FLEURS (`hi_in`, `mr_in`, `en_us`):**
   ```bash
   python scripts/download_fleurs_data.py
   ```
-- **Process Raw Files in `data/raw/`:**
+
+- **Option B: Automatic Download from AI4Bharat IndicVoices (Marathi):**
+  ```bash
+  # Log in to Hugging Face (ai4bharat/IndicVoices is a gated dataset)
+  huggingface-cli login --token YOUR_HF_TOKEN
+
+  # Download Marathi IndicVoices dataset
+  python scripts/download_indicvoices_data.py --languages marathi
+  ```
+
+- **Option C: Process Raw Local FLEURS Files in `data/raw/`:**
   ```bash
   python scripts/prepare_local_fleurs.py
   ```
-- **Validate Manifests:**
+
+- **Validate CSV Manifests:**
   ```bash
   python scripts/prepare_dataset.py
   ```
