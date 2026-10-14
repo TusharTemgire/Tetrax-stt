@@ -1,18 +1,18 @@
 # Tetrax STT — Multilingual Speech-to-Text (Phase 1)
 
 Multilingual Speech-to-Text pipeline fine-tuned on OpenAI **Whisper Small** for:
+- 🚩 **Marathi** (`mr_in` / `mr`) — Enhanced with **AI4Bharat IndicVoices**
 - 🇮🇳 **Hindi** (`hi_in` / `hi`)
-- 🚩 **Marathi** (`mr_in` / `mr`)
 - 🇺🇸 **English** (`en_us` / `en`)
 
-Using the **Google FLEURS** dataset (`google/fleurs`).
+Using the **AI4Bharat IndicVoices** dataset (`ai4bharat/IndicVoices`) and **Google FLEURS** dataset (`google/fleurs`).
 
 ---
 
 ## 📘 Quick Guides
 - 🚀 **Model Usage Guide**: [`MODEL_USAGE.md`](file:///d:/Tushar_repos/Tetrax-stt/MODEL_USAGE.md)
 - ⚡ **Google Colab Training Guide**: [`COLAB_GUIDE.md`](file:///d:/Tushar_repos/Tetrax-stt/COLAB_GUIDE.md) | Notebook: [`tetrax_stt_colab_training.ipynb`](file:///d:/Tushar_repos/Tetrax-stt/tetrax_stt_colab_training.ipynb)
-- ☁️ **RunPod GPU Server Guide**: [`RUNPOD_GUIDE.md`](file:///d:/Tushar_repos/Tetrax-stt/RUNPOD_GUIDE.md)
+- ☁️ **RunPod GPU Server Guide**: [`RUNPOD_GUIDE.md`](file:///d:/Tushar_repos/Tetrax-stt/RUNPOD_GUIDE.md) *(High-speed cloud training & 24/7 API hosting)*
 
 ---
 
@@ -85,21 +85,32 @@ tetrax-stt/
 
 ### Step 2: Prepare Dataset
 
-- **Option A: Automatic Download from Google FLEURS (`hi_in`, `mr_in`, `en_us`):**
+- **Option A: Automatic Download from AI4Bharat IndicVoices (Marathi) — *Recommended for Marathi*:**
+  > ⚠️ `ai4bharat/IndicVoices` is a gated dataset on Hugging Face. Accept terms at [https://huggingface.co/datasets/ai4bharat/IndicVoices](https://huggingface.co/datasets/ai4bharat/IndicVoices) first.
+  ```bash
+  # Log in to Hugging Face
+  huggingface-cli login --token YOUR_HF_TOKEN
+
+  # Download and extract Marathi IndicVoices dataset
+  python scripts/download_indicvoices_data.py --languages marathi
+  ```
+  *(For a quick test run, pass `--limit 500`)*
+
+- **Option B: Automatic Download from Google FLEURS (`hi_in`, `mr_in`, `en_us`):**
   ```bash
   python scripts/download_fleurs_data.py
   ```
 
-- **Option B: Automatic Download from AI4Bharat IndicVoices (Marathi):**
+- **Option C: Combined Multilingual Dataset (FLEURS + IndicVoices):**
   ```bash
-  # Log in to Hugging Face (ai4bharat/IndicVoices is a gated dataset)
-  huggingface-cli login --token YOUR_HF_TOKEN
+  # Download FLEURS (hi, mr, en)
+  python scripts/download_fleurs_data.py
 
-  # Download Marathi IndicVoices dataset
-  python scripts/download_indicvoices_data.py --languages marathi
+  # Append IndicVoices Marathi into the existing manifests
+  python scripts/download_indicvoices_data.py --languages marathi --append
   ```
 
-- **Option C: Process Raw Local FLEURS Files in `data/raw/`:**
+- **Option D: Process Raw Local FLEURS Files in `data/raw/`:**
   ```bash
   python scripts/prepare_local_fleurs.py
   ```
@@ -113,9 +124,15 @@ tetrax-stt/
 
 ### Step 3: Fine-Tune Whisper Small Model
 
-```bash
-python scripts/train.py --max_steps 500 --batch_size 2 --grad_accum 8 --learning_rate 1e-5
-```
+- **Local / Colab (Standard):**
+  ```bash
+  python scripts/train.py --max_steps 500 --batch_size 2 --grad_accum 8 --learning_rate 1e-5
+  ```
+
+- **RunPod (RTX 4090 / 24GB VRAM):**
+  ```bash
+  python scripts/train.py --max_steps 1000 --batch_size 8 --grad_accum 2 --learning_rate 1e-5
+  ```
 
 ---
 
@@ -133,7 +150,16 @@ python scripts/evaluate.py
 uvicorn tetrax_stt.api:app --app-dir src --host 0.0.0.0 --port 8000
 ```
 
-#### Test Transcription Endpoint:
+#### Test Transcription Endpoints:
+
+**Marathi (IndicVoices sample):**
+```bash
+curl -X POST http://localhost:8000/v1/audio/transcriptions \
+  -F "file=@data/audio/mr/test/indicvoices_mr_test_00000.wav" \
+  -F "language=mr"
+```
+
+**Hindi:**
 ```bash
 curl -X POST http://localhost:8000/v1/audio/transcriptions \
   -F "file=@data/audio/hi/test/hi_test_00000.wav" \
