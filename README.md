@@ -101,16 +101,7 @@ tetrax-stt/
   python scripts/download_fleurs_data.py
   ```
 
-- **Option C: Combined Multilingual Dataset (FLEURS + IndicVoices):**
-  ```bash
-  # Download FLEURS (hi, mr, en)
-  python scripts/download_fleurs_data.py
-
-  # Append IndicVoices Marathi into the existing manifests
-  python scripts/download_indicvoices_data.py --languages marathi --append
-  ```
-
-- **Option D: Process Raw Local FLEURS Files in `data/raw/`:**
+- **Option C: Process Raw Local FLEURS Files in `data/raw/`:**
   ```bash
   python scripts/prepare_local_fleurs.py
   ```

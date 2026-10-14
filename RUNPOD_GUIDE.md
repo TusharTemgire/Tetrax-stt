@@ -76,22 +76,13 @@ python scripts/download_indicvoices_data.py --languages marathi
 > python scripts/download_indicvoices_data.py --languages marathi --limit 500
 > ```
 
-### Option B: Combined Dataset (Google FLEURS + AI4Bharat IndicVoices)
-To train a comprehensive multilingual model covering Hindi, English, and rich conversational Marathi:
-```bash
-# 1. Download Google FLEURS (hi, mr, en)
-python scripts/download_fleurs_data.py
-
-# 2. Append AI4Bharat IndicVoices Marathi into the same manifests
-python scripts/download_indicvoices_data.py --languages marathi --append
-```
-
-### Option C: Google FLEURS Only (`hi`, `mr`, `en`)
+### Option B: Google FLEURS (`hi_in`, `mr_in`, `en_us`)
+Download the multilingual Google FLEURS benchmark dataset:
 ```bash
 python scripts/download_fleurs_data.py
 ```
 
-### Option D: Local Raw Dataset Upload
+### Option C: Local Raw Dataset Upload
 If uploading `hi_in`, `mr_in`, `en_us` folders to `/workspace/tetrax-stt/data/raw/`:
 ```bash
 python scripts/prepare_local_fleurs.py
