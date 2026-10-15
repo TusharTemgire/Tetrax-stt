@@ -23,8 +23,9 @@ tetrax-stt/
 ├── configs/
 │   └── languages.yaml             # Target language configurations (hi, mr, en)
 ├── data/
-│   ├── raw/                       # Manual raw FLEURS downloads go here
-│   │   ├── hi_in/
+│   ├── raw/                       # Manual raw FLEURS / IndicVoices downloads go here
+│   │   ├── indicvoices_marathi/   # Downloaded IndicVoices .parquet files
+│   │   ├── hi_in/                 # FLEURS downloads
 │   │   ├── mr_in/
 │   │   └── en_us/
 │   ├── audio/                     # Extracted 16kHz WAV audio files (gitignored)
@@ -85,16 +86,32 @@ tetrax-stt/
 
 ### Step 2: Prepare Dataset
 
-- **Option A: Automatic Download from AI4Bharat IndicVoices (Marathi) — *Recommended for Marathi*:**
+- **Option A: AI4Bharat IndicVoices (Marathi) — *Recommended for Marathi*:**
+  
+  *Sub-option 1: Automatic Download from Hugging Face:*
   > ⚠️ `ai4bharat/IndicVoices` is a gated dataset on Hugging Face. Accept terms at [https://huggingface.co/datasets/ai4bharat/IndicVoices](https://huggingface.co/datasets/ai4bharat/IndicVoices) first.
   ```bash
   # Log in to Hugging Face
   huggingface-cli login --token YOUR_HF_TOKEN
 
-  # Download and extract Marathi IndicVoices dataset
+  # Download and extract Marathi IndicVoices dataset directly
   python scripts/download_indicvoices_data.py --languages marathi
   ```
   *(For a quick test run, pass `--limit 500`)*
+
+  *Sub-option 2: Manual Download & Setup (Avoids 37.5 GB timeout & network crashes):*
+  > 💡 **Why Manual?** IndicVoices Marathi is 37.5 GB across 72 parquet files. You can manually download just 1 or 2 parquet files (e.g. `train-00000-of-00072.parquet` and `dev-00000-of-00001.parquet`) from [Hugging Face Files & Versions](https://huggingface.co/datasets/ai4bharat/IndicVoices/tree/main/IndicVoices/marathi) to train on thousands of samples without downloading the full 37.5 GB.
+  1. Download `.parquet` files from Hugging Face:
+     - Directly via browser download button, OR
+     - Using `huggingface-cli`:
+       ```bash
+       huggingface-cli download ai4bharat/IndicVoices --repo-type dataset --include "IndicVoices/marathi/*" --local-dir data/raw/indicvoices_marathi
+       ```
+  2. Place downloaded `.parquet` files into `data/raw/indicvoices_marathi/`.
+  3. Extract audio and generate manifests:
+     ```bash
+     python scripts/download_indicvoices_data.py --local-dir data/raw/indicvoices_marathi --languages marathi --append
+     ```
 
 - **Option B: Automatic Download from Google FLEURS (`hi_in`, `mr_in`, `en_us`):**
   ```bash

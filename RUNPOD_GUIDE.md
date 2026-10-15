@@ -65,7 +65,8 @@ RunPod provides high-performance cloud GPUs (RTX 3090, RTX 4090, A100, L40S) for
 RunPod instances benefit from ultra-fast 1–10 Gbps cloud network connectivity, making dataset downloads and conversions exceptionally fast.
 
 ### Option A: AI4Bharat IndicVoices (Marathi) — *Recommended for Marathi STT*
-Download the high-quality conversational Marathi speech dataset from AI4Bharat:
+
+**1. Automatic Download directly from Hugging Face:**
 ```bash
 # Download and extract Marathi speech & build manifests:
 python scripts/download_indicvoices_data.py --languages marathi
@@ -75,6 +76,16 @@ python scripts/download_indicvoices_data.py --languages marathi
 > ```bash
 > python scripts/download_indicvoices_data.py --languages marathi --limit 500
 > ```
+
+**2. Manual Download / Parquet CLI Download:**
+If you want to download specific parquet files or avoid streaming all 37.5 GB:
+```bash
+# Download Marathi parquet files via huggingface-cli
+huggingface-cli download ai4bharat/IndicVoices --repo-type dataset --include "IndicVoices/marathi/*" --local-dir data/raw/indicvoices_marathi
+
+# Process and extract local parquet files
+python scripts/download_indicvoices_data.py --local-dir data/raw/indicvoices_marathi --languages marathi --append
+```
 
 ### Option B: Google FLEURS (`hi_in`, `mr_in`, `en_us`)
 Download the multilingual Google FLEURS benchmark dataset:

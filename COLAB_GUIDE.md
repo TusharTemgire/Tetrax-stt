@@ -41,12 +41,22 @@ drive.mount('/content/drive')
 ```
 
 #### Option B: Download AI4Bharat IndicVoices (Marathi)
+
+**Sub-option B1: Online Download from Hugging Face:**
 ```bash
 # Log in to Hugging Face (ai4bharat/IndicVoices is a gated dataset)
 !huggingface-cli login --token YOUR_HF_TOKEN
 
 # Download Marathi dataset from IndicVoices
 !python scripts/download_indicvoices_data.py --languages marathi
+!python scripts/prepare_dataset.py
+```
+
+**Sub-option B2: Process Manually Uploaded Parquet Files (from Google Drive / Local):**
+> 💡 *Useful to avoid Colab downloading 37.5 GB: simply upload 1-2 `.parquet` files to Google Drive!*
+```bash
+# Mount Google Drive and process parquet files stored in Drive or local folder:
+!python scripts/download_indicvoices_data.py --local-dir /content/drive/MyDrive/indicvoices_marathi --languages marathi --append
 !python scripts/prepare_dataset.py
 ```
 
